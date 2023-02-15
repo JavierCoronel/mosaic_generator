@@ -12,7 +12,7 @@ class ImagePreprocessor:
         self.edge_extractor_name = config_parameters.edges
 
     def read_image(self, preprocess_image=True):
-        assert os.path.isfile(self.image_path), f"Image file does not exist"
+        assert os.path.isfile(self.image_path), f"Image file does not exist: {self.image_path}"
         image = io.imread(self.image_path)
 
         if preprocess_image:
@@ -35,10 +35,7 @@ class ImagePreprocessor:
 
         return processed_image
 
-    def extract_edges(
-        self,
-        image,
-    ):
+    def extract_edges(self, image):
 
         if self.edge_extractor_name == "HED":
             edges = extract_edges(image)
@@ -53,6 +50,3 @@ class ImagePreprocessor:
                 edges = cee.diblasi_edges(image)
 
         return edges
-
-    def postprocess_image():
-        return 1

@@ -1,11 +1,16 @@
-import os
-import time
-import numpy as np
-import matplotlib.pyplot as plt
+"""
+This module provides a MosaicGenerator class for converting an image into an ancient mosaic style.
 
-from skimage import io, filters, transform
+The MosaicGenerator class provides a way to generate an ancient mosaic from any given image.
+It reads the input image, extracts its edges, and then creates polyggon tiles based on the extracted edges.
+The coloring of the tiles is taken from the original image or it can be generated using different coloring methods like 'original', 'kmeans', and 'dict'.
+The generated mosaic can be plotted and saved.
+"""
+
+import os
+from typing import List
+
 from easydict import EasyDict as edict
-from edges.edge_extractor import EdgeExtractor
 from image_preprocessor import ImagePreprocessor
 from mosaic_guides import MosaicGuides
 from mosaic_tiles import MosaicTiles
@@ -13,36 +18,55 @@ from mosaic_coloring import MosaicColoring
 
 
 class MosaicGenerator:
-    def __init__(self, config_parameters):
+    """A class to generate a mosaic"""
 
-        self.config_params = config_parameters
-        self.image_path = config_parameters.image_path
-        self.edge_extractor = EdgeExtractor(config_parameters)
-        self.mosaic_coloring = MosaicColoring(config_parameters)
-        ##############
-        self.image_preprocessor = ImagePreprocessor(config_parameters)
-        self.mosaic_guides = MosaicGuides(config_parameters)
-        self.mosaic_tiles = MosaicTiles(config_parameters)
+    def __init__(self, configuration_params):
+        self.config_params = configuration_params
+        self.image_path = configuration_params.image_path
+        self.mosaic_coloring = MosaicColoring(configuration_params)
+        self.image_preprocessor = ImagePreprocessor(configuration_params)
+        self.mosaic_guides = MosaicGuides(configuration_params)
+        self.mosaic_tiles = MosaicTiles(configuration_params)
 
-    def fill_mosaic_gaps(self, mosaic, iter_num=4):
+    def fill_mosaic_gaps(self, tiles: List[int], iter_num: int = 4) -> List[int]:
+        """_summary_
 
-        for iteration in range(iter_num):
-            gap_guides, gap_angles = self.mosaic_guides.get_gaps_from_polygons(mosaic)
-            mosaic = self.mosaic_tiles.place_tiles_along_guides(gap_guides, gap_angles, polygons=mosaic)
+        Parameters
+        ----------
+        tiles : List[int]
+            List of polygons that represent the tiles of a mosaic
+        iter_num : int, optional
+            Number of iterations to fill the gaps in the mosaic, by default 4
 
-        post_proc_mosaic = self.mosaic_tiles._postprocess_polygons(mosaic)
+        Returns
+        -------
+        List[int]
+            New list of polygons with filled gaps
+        """
+        while iter_num != 0:
+            gap_guides, gap_angles = self.mosaic_guides.get_gaps_from_polygons(tiles)
+            tiles = self.mosaic_tiles.place_tiles_along_guides(gap_guides, gap_angles, polygons=tiles)
+            iter_num -= 1
+
+        post_proc_mosaic = self.mosaic_tiles.postprocess_polygons(tiles)
 
         return post_proc_mosaic
 
     def save_mosaic(self, mosaic_figure):
+        """Saves the plot of a mosaic
 
+        Parameters
+        ----------
+        mosaic_figure : matplotlib figure
+            Matplotlib figure with the plot of a mosaic
+        """
         file_name = os.path.basename(self.config_params.image_path)
         output_path = os.path.join(self.config_params.output_folder, file_name)
         dpi = 300
         mosaic_figure.savefig(output_path, dpi=dpi)
 
     def generate_mosaic(self):
-
+        """Generates a mosaic based on pre-initialized parameters"""
         # Load and preprocess image
         image = self.image_preprocessor.read_image()
         image_edges = self.image_preprocessor.extract_edges(image)
@@ -66,11 +90,11 @@ class MosaicGenerator:
 if __name__ == "__main__":
 
     config_parameters = {
-        "image_path": "data\input\ds_guilloche_600.jpg",
-        "output_folder": "data\output\double_strand",
+        "image_path": r"data\input\ds_guilloche_600.jpg",
+        "output_folder": r"data\output\double_strand",
         "edges": "diblasi",
         "tile_size": 8,
-        "coloring_method": "kmeans",  # original/kmeans/dict
+        "coloring_method": "original",  # original/kmeans/dict
         "num_colors": 5,
     }
     config_parameters = edict(config_parameters)

@@ -1,31 +1,31 @@
-import cv2 as cv
 from pathlib import Path
+import cv2 as cv
 from skimage import filters
 import numpy as np
 import skimage as sk
 
 # based on https://github.com/opencv/opencv/blob/master/samples/dnn/edge_detection.py
 class CropLayer(object):
-    def __init__(self, params, blobs):
-        self.xstart = 0
-        self.xend = 0
-        self.ystart = 0
-        self.yend = 0
+    def __init__(self):
+        self.x_start = 0
+        self.x_end = 0
+        self.y_start = 0
+        self.y_end = 0
 
     # Our layer receives two inputs. We need to crop the first input blob
     # to match a shape of the second one (keeping batch size and number of channels)
     def getMemoryShapes(self, inputs):
-        inputShape, targetShape = inputs[0], inputs[1]
-        batchSize, numChannels = inputShape[0], inputShape[1]
-        height, width = targetShape[2], targetShape[3]
-        self.ystart = int((inputShape[2] - targetShape[2]) / 2)
-        self.xstart = int((inputShape[3] - targetShape[3]) / 2)
-        self.yend = self.ystart + height
-        self.xend = self.xstart + width
-        return [[batchSize, numChannels, height, width]]
+        input_shape, target_shape = inputs[0], inputs[1]
+        batch_size, num_channels = input_shape[0], input_shape[1]
+        height, width = target_shape[2], target_shape[3]
+        self.y_start = int((input_shape[2] - target_shape[2]) / 2)
+        self.x_start = int((input_shape[3] - target_shape[3]) / 2)
+        self.y_end = self.y_start + height
+        self.x_end = self.x_start + width
+        return [[batch_size, num_channels, height, width]]
 
     def forward(self, inputs):
-        return [inputs[0][:, :, self.ystart : self.yend, self.xstart : self.xend]]
+        return [inputs[0][:, :, self.y_start : self.y_end, self.x_start : self.x_end]]
 
 
 def run_network(image):

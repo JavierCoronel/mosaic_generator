@@ -1,11 +1,8 @@
-import numpy as np
-from skimage import draw
-from scipy.ndimage import label, morphology
-from skimage.morphology import closing, disk
-from skimage.morphology import skeletonize
 import copy
-import time
-import skimage as sk
+import numpy as np
+from scipy.ndimage import label, morphology
+from skimage import draw
+from skimage.morphology import closing, disk, skeletonize
 import matplotlib.pyplot as plt
 
 
@@ -13,6 +10,8 @@ class MosaicGuides:
     def __init__(self, config_parameters):
         self.half_tile = config_parameters.tile_size // 2
         self.chain_spacing = 0.5
+        self.height = None
+        self.width = None
 
     def get_initial_guides(self, image_edges):
 
@@ -35,11 +34,11 @@ class MosaicGuides:
     def _get_gradient_angles(self, distances):
 
         gradient = np.zeros((self.height, self.width))
-        for x in range(1, self.height - 1):
-            for y in range(1, self.width - 1):
-                numerator = distances[x, y + 1] - distances[x, y - 1]
-                denominator = distances[x + 1, y] - distances[x - 1, y]
-                gradient[x, y] = np.arctan2(numerator, denominator)
+        for x_cord in range(1, self.height - 1):
+            for y_cord in range(1, self.width - 1):
+                numerator = distances[x_cord, y_cord + 1] - distances[x_cord, y_cord - 1]
+                denominator = distances[x_cord + 1, y_cord] - distances[x_cord - 1, y_cord]
+                gradient[x_cord, y_cord] = np.arctan2(numerator, denominator)
         angles_0to180 = (gradient * 180 / np.pi + 180) % 180
 
         return angles_0to180
@@ -47,7 +46,7 @@ class MosaicGuides:
     def _pixellines_to_ordered_points(self, matrix):
         # break guidelines into chains and order the pixel for all chain
 
-        matrix = sk.morphology.skeletonize(matrix)  # nicer lines, better results
+        matrix = skeletonize(matrix)  # nicer lines, better results
         matrix_labeled, chain_count = label(matrix, structure=[[1, 1, 1], [1, 1, 1], [1, 1, 1]])  # find chains
         chains = []
         for i_chain in range(1, chain_count):
@@ -66,14 +65,14 @@ class MosaicGuides:
                 points = np.argwhere(pixel != 0)
                 if len(points) == 0:
                     break
-                x, y = points[0]  # set starting point
+                x_cord, y_cord = points[0]  # set starting point
                 done = False
                 subchain = []
                 while not done:
-                    subchain += [[x, y]]
-                    pixel[x, y] = 0
+                    subchain += [[x_cord, y_cord]]
+                    pixel[x_cord, y_cord] = 0
                     done = True
-                    for dx, dy in [
+                    for dx_cord, dy_cord in [
                         (+1, 0),
                         (-1, 0),
                         (+1, -1),
@@ -87,10 +86,13 @@ class MosaicGuides:
                         (+1, +1),
                     ]:
                         if (
-                            x + dx >= 0 and x + dx < pixel.shape[0] and y + dy >= 0 and y + dy < pixel.shape[1]
+                            x_cord + dx_cord >= 0
+                            and x_cord + dx_cord < pixel.shape[0]
+                            and y_cord + dy_cord >= 0
+                            and y_cord + dy_cord < pixel.shape[1]
                         ):  # prüfen ob im Bild drin
-                            if pixel[x + dx, y + dy] > 0:  # check for pixel here
-                                x, y = x + dx, y + dy  # if yes, jump here
+                            if pixel[x_cord + dx_cord, y_cord + dy_cord] > 0:  # check for pixel here
+                                x_cord, y_cord = x_cord + dx_cord, y_cord + dy_cord  # if yes, jump here
                                 done = False  # tell the middle loop that the chain is not finished
                                 break  # break inner loop
                 if len(subchain) > self.half_tile // 2:
@@ -100,17 +102,15 @@ class MosaicGuides:
 
     def get_gaps_from_polygons(self, polygons):
 
-        # get area which are already occupied
+        # get area which are already_cord occupied
         img_chains = np.zeros((self.height, self.width), dtype=np.uint8)
 
-        for p in polygons:
-            y, x = p.exterior.coords.xy
-            rr, cc = draw.polygon(x, y, shape=img_chains.shape)
-            img_chains[rr, cc] = 1
+        for polygon in polygons:
+            y_cord, x_cord = polygon.exterior.coords.xy
+            row_cord, col_cord = draw.polygon(x_cord, y_cord, shape=img_chains.shape)
+            img_chains[row_cord, col_cord] = 1
 
-        img_chains_1 = closing(img_chains, disk(1))
         img_chains_2 = closing(img_chains, disk(2))
-        img_chains_3 = closing(img_chains, disk(3))
         distance_to_tile = morphology.distance_transform_edt(img_chains_2 == 0).astype(int)
 
         distance_to_tile_binary = distance_to_tile / distance_to_tile.max() > 0.2
@@ -133,15 +133,15 @@ class MosaicGuides:
         return chains, angles
 
     @staticmethod
-    def plot_chains(chains, colors=None):
+    def plot_chains(chains):
 
-        fig, ax = plt.subplots(dpi=90)
-        ax.invert_yaxis()
-        ax.autoscale()
+        _, axis = plt.subplots(dpi=90)
+        axis.invert_yaxis()
+        axis.autoscale()
 
         print("Drwaing chain")
         for chain in chains:
-            yy, xx = np.array(chain).T
-            ax.plot(xx, yy, lw=0.7)  # , c='w'
+            y_cord, x_cord = np.array(chain).T
+            axis.plot(y_cord, x_cord, lw=0.7)  # , c='w'
 
         plt.show()
