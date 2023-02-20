@@ -12,103 +12,88 @@ class MosaicGuides:
         self.chain_spacing = 0.5
         self.height = None
         self.width = None
+        self.neighbors_coords = [(x, y) for x in range(1, -2, -1) for y in range(-1, 2) if x != 0 or y != 0]
 
     def get_initial_guides(self, image_edges):
 
-        # for each pixel get distance to closest edge
-        distances = morphology.distance_transform_edt(
-            image_edges == 0,
-        )
-
         self.height = image_edges.shape[0]
         self.width = image_edges.shape[1]
-        guidelines = np.zeros((self.height, self.width), dtype=np.uint8)
-        mask = (distances.astype(int) + self.half_tile) % (2 * self.half_tile) == 0
-        guidelines[mask] = 1
 
-        chains = self._pixellines_to_ordered_points(guidelines)
-        angles = self._get_gradient_angles(distances)
+        # for each pixel get distance to closest edge
+        distance_to_edge = morphology.distance_transform_edt(
+            image_edges == 0,
+        )
+        guidelines = (distance_to_edge.astype(int) + self.half_tile) % (2 * self.half_tile) == 0
 
-        return chains, angles
+        list_of_guidelines = self._get_list_of_guidelines(guidelines)
+        angles = self._get_guideline_angles(distance_to_edge)
 
-    def _get_gradient_angles(self, distances):
+        return list_of_guidelines, angles
+
+    def _get_guideline_angles(self, distances):
 
         gradient = np.zeros((self.height, self.width))
-        for x_cord in range(1, self.height - 1):
-            for y_cord in range(1, self.width - 1):
-                numerator = distances[x_cord, y_cord + 1] - distances[x_cord, y_cord - 1]
-                denominator = distances[x_cord + 1, y_cord] - distances[x_cord - 1, y_cord]
-                gradient[x_cord, y_cord] = np.arctan2(numerator, denominator)
+
+        for x_coord in range(1, self.height - 1):
+            for y_coord in range(1, self.width - 1):
+
+                numerator = distances[x_coord, y_coord + 1] - distances[x_coord, y_coord - 1]
+                denominator = distances[x_coord + 1, y_coord] - distances[x_coord - 1, y_coord]
+                gradient[x_coord, y_coord] = np.arctan2(numerator, denominator)
+
         angles_0to180 = (gradient * 180 / np.pi + 180) % 180
 
         return angles_0to180
 
-    def _pixellines_to_ordered_points(self, matrix):
+    def _get_list_of_guidelines(self, raw_guidelines):
         # break guidelines into chains and order the pixel for all chain
 
-        matrix = skeletonize(matrix)  # nicer lines, better results
-        matrix_labeled, chain_count = label(matrix, structure=[[1, 1, 1], [1, 1, 1], [1, 1, 1]])  # find chains
-        chains = []
-        for i_chain in range(1, chain_count):
-            pixel = copy.deepcopy(matrix_labeled)
-            pixel[pixel != i_chain] = 0
+        raw_guidelines = skeletonize(raw_guidelines)  # nicer lines, better results
+        raw_guidelines_labeled, guidelines_count = label(raw_guidelines, structure=[[1] * 3 for _ in range(3)])
 
-            # alternative using openCV results results in closed chains (might be better), but a few chains are missing
-            # hierarchy,contours = cv2.findContours(pixel.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-            # for h in hierarchy:
-            #     h2 = h.reshape((-1,2))
-            #     h3 = [list(xy)[::-1] for xy in h2]
-            # if len(h3)>3:
-            #     chains3 += [ h3 ]
+        guides = []
+        for guide_id in range(1, guidelines_count):
+            binary_guide = copy.deepcopy(raw_guidelines_labeled)
+            binary_guide[binary_guide != guide_id] = 0
 
             while True:
-                points = np.argwhere(pixel != 0)
+                points = np.argwhere(binary_guide != 0)
                 if len(points) == 0:
                     break
-                x_cord, y_cord = points[0]  # set starting point
+                x_coord, y_coord = points[0]  # set starting point
                 done = False
-                subchain = []
+                sub_guide = []
                 while not done:
-                    subchain += [[x_cord, y_cord]]
-                    pixel[x_cord, y_cord] = 0
+                    sub_guide += [[x_coord, y_coord]]
+                    binary_guide[x_coord, y_coord] = 0
                     done = True
-                    for dx_cord, dy_cord in [
-                        (+1, 0),
-                        (-1, 0),
-                        (+1, -1),
-                        (-1, +1),
-                        (
-                            0,
-                            -1,
-                        ),
-                        (0, +1),
-                        (-1, -1),
-                        (+1, +1),
-                    ]:
-                        if (
-                            x_cord + dx_cord >= 0
-                            and x_cord + dx_cord < pixel.shape[0]
-                            and y_cord + dy_cord >= 0
-                            and y_cord + dy_cord < pixel.shape[1]
-                        ):  # prüfen ob im Bild drin
-                            if pixel[x_cord + dx_cord, y_cord + dy_cord] > 0:  # check for pixel here
-                                x_cord, y_cord = x_cord + dx_cord, y_cord + dy_cord  # if yes, jump here
+
+                    for dx_coord, dy_coord in self.neighbors_coords:
+                        x_coord_in_image = self.check_coords_in_range(x_coord + dx_coord, 0, self.height)
+                        y_coord_in_image = self.check_coords_in_range(y_coord + dy_coord, 0, self.width)
+
+                        if x_coord_in_image and y_coord_in_image:
+                            neighbor_pixel_value = binary_guide[x_coord + dx_coord, y_coord + dy_coord]
+
+                            if neighbor_pixel_value > 0:  # check for pixel here
+                                x_coord, y_coord = x_coord + dx_coord, y_coord + dy_coord  # if yes, jump here
                                 done = False  # tell the middle loop that the chain is not finished
                                 break  # break inner loop
-                if len(subchain) > self.half_tile // 2:
-                    chains += [subchain]
 
-        return chains
+                if len(sub_guide) > self.half_tile // 2:
+                    guides += [sub_guide]
+
+        return guides
 
     def get_gaps_from_polygons(self, polygons):
 
-        # get area which are already_cord occupied
+        # get area which are already_coord occupied
         img_chains = np.zeros((self.height, self.width), dtype=np.uint8)
 
         for polygon in polygons:
-            y_cord, x_cord = polygon.exterior.coords.xy
-            row_cord, col_cord = draw.polygon(x_cord, y_cord, shape=img_chains.shape)
-            img_chains[row_cord, col_cord] = 1
+            y_coord, x_coord = polygon.exterior.coords.xy
+            row_coord, col_coord = draw.polygon(x_coord, y_coord, shape=img_chains.shape)
+            img_chains[row_coord, col_coord] = 1
 
         img_chains_2 = closing(img_chains, disk(2))
         distance_to_tile = morphology.distance_transform_edt(img_chains_2 == 0).astype(int)
@@ -127,10 +112,16 @@ class MosaicGuides:
         # guidelines2 = np.zeros((self.height, self.width), dtype=np.uint8)
         # guidelines2[mask] = 1
 
-        chains = self._pixellines_to_ordered_points(guides)
-        angles = self._get_gradient_angles(distance_to_tile)
+        chains = self._get_list_of_guidelines(guides)
+        angles = self._get_guideline_angles(distance_to_tile)
 
         return chains, angles
+
+    @staticmethod
+    def check_coords_in_range(coords, lower_bound, higher_bound):
+        if lower_bound <= coords < higher_bound:
+            return True
+        return False
 
     @staticmethod
     def plot_chains(chains):
@@ -141,7 +132,7 @@ class MosaicGuides:
 
         print("Drwaing chain")
         for chain in chains:
-            y_cord, x_cord = np.array(chain).T
-            axis.plot(y_cord, x_cord, lw=0.7)  # , c='w'
+            y_coord, x_coord = np.array(chain).T
+            axis.plot(y_coord, x_coord, lw=0.7)  # , c='w'
 
         plt.show()
