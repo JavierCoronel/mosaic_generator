@@ -1,4 +1,5 @@
 import copy
+from typing import List
 import numpy as np
 from scipy.ndimage import label, morphology
 from skimage import draw
@@ -14,8 +15,21 @@ class MosaicGuides:
         self.width = None
         self.neighbors_coords = [(x, y) for x in range(1, -2, -1) for y in range(-1, 2) if x != 0 or y != 0]
 
-    def get_initial_guides(self, image_edges):
+    def get_initial_guides(self, image_edges: np.array) -> List:
+        """Computes the a set of angles and guidelines for tiles. The guidelines are
+        obtained based on the edges of an image and the size of the tiles to use
 
+        Parameters:
+        -----------
+        image_edges: np.array
+            The edge map of an image
+
+        Returns:
+        --------
+        Tuple[List, np.array]
+            A tuple containing the list of initial guidelines and the array of guideline angles
+
+        """
         self.height = image_edges.shape[0]
         self.width = image_edges.shape[1]
 
@@ -30,7 +44,20 @@ class MosaicGuides:
 
         return list_of_guidelines, angles
 
-    def _get_guideline_angles(self, distances):
+    def _get_guideline_angles(self, distances: np.array) -> np.array:
+        """Calculates the angle of the gradient of distance_to_edge at each pixel location
+
+        Parameters
+        ----------
+        distances : np.array
+            A numpy array representing the distance to the closest guideline for each pixel
+
+        Returns
+        -------
+        np.array
+            A numpy array representing the angle of the gradient of distance_to_edge at each pixel
+            location in the range [0, 180)
+        """
 
         gradient = np.zeros((self.height, self.width))
 
@@ -45,13 +72,26 @@ class MosaicGuides:
 
         return angles_0to180
 
-    def _get_list_of_guidelines(self, raw_guidelines):
+    def _get_list_of_guidelines(self, raw_guidelines: np.array) -> List:
+        """Breaks an array of guidelines into a list of smaller sub_guidelines containing pixel coordinates
+
+        Parameters
+        ----------
+        raw_guidelines : np.array
+            Binary image array with the raw guidelines
+
+        Returns
+        -------
+        List
+            List of guidelines with the pixel coordinates
+        """
+
         # break guidelines into chains and order the pixel for all chain
 
         raw_guidelines = skeletonize(raw_guidelines)  # nicer lines, better results
         raw_guidelines_labeled, guidelines_count = label(raw_guidelines, structure=[[1] * 3 for _ in range(3)])
 
-        guides = []
+        guidelines = []
         for guide_id in range(1, guidelines_count):
             binary_guide = copy.deepcopy(raw_guidelines_labeled)
             binary_guide[binary_guide != guide_id] = 0
@@ -81,9 +121,9 @@ class MosaicGuides:
                                 break  # break inner loop
 
                 if len(sub_guide) > self.half_tile // 2:
-                    guides += [sub_guide]
+                    guidelines += [sub_guide]
 
-        return guides
+        return guidelines
 
     def get_gaps_from_polygons(self, polygons):
 
