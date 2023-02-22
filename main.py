@@ -63,6 +63,9 @@ class MosaicGenerator:
         file_name = os.path.basename(self.config_params.image_path)
         output_path = os.path.join(self.config_params.output_folder, file_name)
         dpi = 300
+        print(f"Saving mosaic to {output_path}")
+        dest_dir = os.path.dirname(output_path)
+        os.makedirs(dest_dir, exist_ok=True)
         mosaic_figure.savefig(output_path, dpi=dpi)
 
     def generate_mosaic(self):
@@ -72,9 +75,11 @@ class MosaicGenerator:
         image_edges = self.image_preprocessor.extract_edges(image)
 
         # Get initial guidelines and place tiles
+        print("Obtaining mosaic...")
         initial_guides, initial_angles = self.mosaic_guides.get_initial_guides(image_edges)
         raw_mosaic = self.mosaic_tiles.place_tiles_along_guides(initial_guides, initial_angles)
 
+        print("Refining mosaic...")
         # Iterate to replace gaps guidelines and tiles
         final_mosaic = self.fill_mosaic_gaps(raw_mosaic)
 
@@ -84,7 +89,7 @@ class MosaicGenerator:
 
         self.save_mosaic(fig)
 
-        print("Done")
+        print("Mosaic finished")
 
 
 if __name__ == "__main__":
@@ -93,7 +98,7 @@ if __name__ == "__main__":
         "image_path": r"data\input\ds_guilloche_600.jpg",
         "output_folder": r"data\output\double_strand",
         "edges": "diblasi",
-        "tile_size": 8,
+        "tile_size": 6,
         "coloring_method": "original",  # original/kmeans/dict
         "num_colors": 5,
     }

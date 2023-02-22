@@ -16,8 +16,8 @@ class MosaicGuides:
         self.neighbors_coords = [(x, y) for x in range(1, -2, -1) for y in range(-1, 2) if x != 0 or y != 0]
 
     def get_initial_guides(self, image_edges: np.array) -> List:
-        """Computes the a set of angles and guidelines for tiles. The guidelines are
-        obtained based on the edges of an image and the size of the tiles to use
+        """Computes the a set of angles and guidelines, useful for tile placement. The guidelines are
+        obtained based on the edges of an image and a given tile size
 
         Parameters:
         -----------

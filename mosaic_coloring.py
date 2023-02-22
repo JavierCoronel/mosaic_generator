@@ -55,7 +55,6 @@ class MosaicColoring:
             image = self.apply_kmeans_to_image(image)
 
         colors = []
-        print("Obtaining colors for polygons")
         for polygon in tqdm(polygons):
 
             x_cord, y_cord = polygon.exterior.xy
@@ -66,6 +65,10 @@ class MosaicColoring:
                 average = img_cut.mean(axis=0).mean(axis=0)
                 color = average / 255
             else:
+                if x_cord[0] >= image.shape[1]:
+                    x_cord[0] = image.shape[1] - 1
+                if y_cord[0] >= image.shape[0]:
+                    y_cord[0] = image.shape[0] - 1
                 color = image[int(y_cord[0]), int(x_cord[0]), :] / 255
 
             colors += [color]
