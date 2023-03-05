@@ -138,21 +138,15 @@ class MosaicGuides:
         img_chains_2 = closing(img_chains, disk(2))
         distance_to_tile = morphology.distance_transform_edt(img_chains_2 == 0).astype(int)
 
-        distance_to_tile_binary = distance_to_tile / distance_to_tile.max() > 0.2
-        guides = skeletonize(distance_to_tile_binary)
+        chain_spacing = int(round(self.half_tile * self.chain_spacing))
+        if chain_spacing <= 1:
+            chain_spacing = 2
+        mask = (distance_to_tile == 1) | ((distance_to_tile % chain_spacing == 0) & (distance_to_tile > 0))
 
-        # chain_spacing = int(round(self.half_tile * self.chain_spacing))
-        # if chain_spacing <= 1:  # would select EVERY pixel inside gap
-        #     chain_spacing = 2
-        # # first condition (d==1) => chains around all (even the smallest) gap borders
-        # # (set e.g. d==2 for faster calculations)
-        # # second condition (...) => more chains inside larger gaps
-        # mask = (distance_to_tile == 1) | ((distance_to_tile % chain_spacing == 0) & (distance_to_tile > 0))
+        guidelines2 = np.zeros((self.height, self.width), dtype=np.uint8)
+        guidelines2[mask] = 1
 
-        # guidelines2 = np.zeros((self.height, self.width), dtype=np.uint8)
-        # guidelines2[mask] = 1
-
-        chains = self._get_list_of_guidelines(guides)
+        chains = self._get_list_of_guidelines(skeletonize(guidelines2))
         angles = self._get_guideline_angles(distance_to_tile)
 
         return chains, angles
