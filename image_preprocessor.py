@@ -1,4 +1,4 @@
-from edges.HED import extract_edges
+from edges.hed_edge_extractor import extract_edges
 import edges.classic_edge_extractors as cee
 from skimage import io, transform
 import os

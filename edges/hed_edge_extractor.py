@@ -1,12 +1,14 @@
 """
 Module to extract the edges of an image using HED 
 """
-from pathlib import Path
-import cv2 as cv
-from skimage import filters
-import numpy as np
 import os
+from pathlib import Path
+
+import cv2 as cv
+import numpy as np
 import skimage as sk
+from skimage import filters
+
 
 # based on https://github.com/opencv/opencv/blob/master/samples/dnn/edge_detection.py
 class CropLayer(object):
