@@ -145,7 +145,9 @@ class MosaicTiles:
         ).convex_hull
 
         # cut off areas that overlap with already existing tiles
-        nearby_polygons = [poly for poly in preselected_nearby_polygons if polygon.disjoint(poly.buffer(0.02)) is False]
+        nearby_polygons = [
+            poly for poly in preselected_nearby_polygons if polygon.buffer(0.02).disjoint(poly.buffer(0.02)) is False
+        ]
         polygon = self._fit_in_polygon(polygon, nearby_polygons)
 
         # Sort out small tiles
