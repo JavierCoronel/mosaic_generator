@@ -1,5 +1,9 @@
+"""
+Module to extract the color from an image and apply it to the tiles of a mosaic
+"""
 from pathlib import Path
 import os
+from typing import List
 import numpy as np
 from skimage import io
 from skimage import draw
@@ -8,12 +12,27 @@ from sklearn.cluster import KMeans
 
 
 class MosaicColoring:
+    """Class for applying colors to a mosaic"""
+
     def __init__(self, config_parameters):
         self.coloring_method = config_parameters.get("coloring_method", None)
         self.num_colors = config_parameters.get("num_colors", None)
         self.colormap_path = config_parameters.get("colormap_path", None)
 
-    def kmeans_colors(self, input_image, num_colors=6):
+    def kmeans_colors(self, input_image: np.array, num_colors: int = 6):
+        """Estimates the kmeans model for the principal colors of an image
+
+        Parameters
+        ----------
+        input_image : np.array
+            Image used to extract the colors
+        num_colors : int, optional
+            Number of colors to extract, by default 6
+
+        Returns
+        -------
+            Kmeans estimator
+        """
 
         n_colors = self.num_colors or num_colors
         sample_size = 200000  # reduce sample size to speed up KMeans
@@ -25,8 +44,14 @@ class MosaicColoring:
 
         return kmeans
 
-    def extract_colormap(self, img_path):
+    def extract_colormap(self, img_path: str):
+        """Extracts the principal colors of an image using kmeans and saves the colors to color collections directory
 
+        Parameters
+        ----------
+        img_path : str
+            Path to the image where to extract the colors
+        """
         input_image = io.imread(img_path)
         kmeans = self.kmeans_colors(input_image)
         color_centers = kmeans.cluster_centers_.astype(int)
@@ -35,8 +60,19 @@ class MosaicColoring:
         os.makedirs(out_path, exist_ok=True)
         np.save(out_path / os.path.basename(img_path), color_centers)
 
-    def apply_kmeans_to_image(self, image):
+    def apply_kmeans_to_image(self, image: np.array) -> np.array:
+        """Extracts and applies the principal colors of an image using kmeans
 
+        Parameters
+        ----------
+        image : np.array
+            Image used to extact and apply the principal colors
+
+        Returns
+        -------
+        np.array
+            Image with applied kmeans
+        """
         width, height, depth = image.shape
         print("Estimating colormap with kmeans")
         kmeans = self.kmeans_colors(image)
@@ -49,8 +85,22 @@ class MosaicColoring:
 
         return kmeans_image
 
-    def get_colors_from_original(self, polygons, image):
+    def get_colors_from_original(self, polygons: List, image: np.array) -> List:
+        """Applies colors to a list of polygons, the colors can come from the nearest neighboring pixel of the
+        original image or from a modified image with reduced colors using kmeans
 
+        Parameters
+        ----------
+        polygons : List
+            List of polygons
+        image : np.array
+            Image used to extract the colors
+
+        Returns
+        -------
+        List
+            _description_
+        """
         if self.coloring_method == "kmeans":
             image = self.apply_kmeans_to_image(image)
 
