@@ -1,6 +1,6 @@
 # Mosaic Image Generator
 
-This repository contains Python code to convert any image into an artistic mosaic representation. It is based on previous work from [yobeatz](https://github.com/yobeatz/mosaic)
+This repository contains Python code to convert any image into an artistic mosaic representation. It is based on previous work from [yobeatz](https://github.com/yobeatz/mosaic).
 
 |     **Original Image**     |     **Generated Mosaic**     |
 | :------------------------: | :--------------------------: |
@@ -38,3 +38,7 @@ To use this project, simply run the `mosaic_generator.py` script adjusting the `
 ## Contributions
 
 Contributions are welcome! If you find a bug or have an idea for a new feature, please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
