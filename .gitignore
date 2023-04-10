@@ -44,5 +44,5 @@ dmypy.json
 *.png
 *.jpg
 *.npy
-.*caffemodel
-.*prototxt
+*.caffemodel
+*.prototxt
