@@ -15,6 +15,7 @@ from image_preprocessor import ImagePreprocessor
 from mosaic_guides import MosaicGuides
 from mosaic_tiles import MosaicTiles
 from mosaic_coloring import MosaicColoring
+from edges.edge_extractor import EdgeExtractor
 
 
 class MosaicGenerator:
@@ -27,6 +28,7 @@ class MosaicGenerator:
         self.image_preprocessor = ImagePreprocessor(configuration_params)
         self.mosaic_guides = MosaicGuides(configuration_params)
         self.mosaic_tiles = MosaicTiles(configuration_params)
+        self.edge_extractor = EdgeExtractor(configuration_params)
 
     def fill_mosaic_gaps(self, tiles: List[int], iter_num: int = 4) -> List[int]:
         """_summary_
@@ -72,7 +74,7 @@ class MosaicGenerator:
         """Generates a mosaic based on pre-initialized parameters"""
         # Load and preprocess image
         image = self.image_preprocessor.read_image()
-        image_edges = self.image_preprocessor.extract_edges(image)
+        image_edges = self.edge_extractor.run(image)
 
         # Get initial guidelines and place tiles
         print("Obtaining mosaic...")
@@ -97,10 +99,11 @@ if __name__ == "__main__":
     config_parameters = {
         "image_path": r"data\input\ds_guilloche_600.jpg",
         "output_folder": r"data\output\double_strand",
-        "edges": "diblasi",
+        "edge_extraction_method": "HED",
         "tile_size": 6,
         "coloring_method": "original",  # original/kmeans/dict
         "num_colors": 5,
+        "resize_image": True,
     }
     config_parameters = edict(config_parameters)
     mosaic = MosaicGenerator(config_parameters)

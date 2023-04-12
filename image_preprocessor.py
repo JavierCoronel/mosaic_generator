@@ -1,7 +1,5 @@
 import os
 import numpy as np
-import edges.classic_edge_extractors as cee
-from edges.hed_edge_extractor import extract_edges
 from skimage import io, transform
 
 
@@ -12,15 +10,10 @@ class ImagePreprocessor:
 
         self.config = config_parameters
         self.image_path = config_parameters.image_path
-        self.edge_extractor_name = config_parameters.edges
+        self.resize_image = None or config_parameters.resize_image
 
-    def read_image(self, preprocess_image=True) -> np.array:
+    def read_image(self) -> np.array:
         """Opens an image specified in the ImagePreprocessor
-
-        Parameters
-        ----------
-        preprocess_image : bool, optional
-            Whether to resize the read image, by default True
 
         Returns
         -------
@@ -30,7 +23,7 @@ class ImagePreprocessor:
         assert os.path.isfile(self.image_path), f"Image file does not exist: {self.image_path}"
         image = io.imread(self.image_path)
 
-        if preprocess_image:
+        if self.resize_image:
             image = self.preprocess_image(image)
 
         return image
@@ -70,30 +63,3 @@ class ImagePreprocessor:
         processed_image = (processed_image * 255).astype(int)
 
         return processed_image
-
-    def extract_edges(self, image: np.array) -> np.array:
-        """Extractes the edges of an image depending on the edge extracting method specified in
-        the ImagePreprocessor
-
-        Parameters
-        ----------
-        image : np.array
-            Image array
-
-        Returns
-        -------
-        np.array
-            Extractes edges of the image
-        """
-        if self.edge_extractor_name == "HED":
-            edges = extract_edges(image)
-
-        elif self.edge_extractor_name == "sobel":
-            edges = cee.sobel_edges(image)
-
-        elif self.edge_extractor_name == "diblasi":
-            edges = cee.diblasi_edges(image)
-        else:
-            print(f"Edge extraction option {self.edge_extractor_name} not recognized")
-
-        return edges

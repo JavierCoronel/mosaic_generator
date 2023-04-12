@@ -1,5 +1,5 @@
 """
-Module to extract the edges of an image using HED 
+Module to extract the edges of an image using Holistically-Nested Edge Detection
 """
 import os
 from pathlib import Path
@@ -109,7 +109,7 @@ def preprocess_image(image):
 
 def extract_edges(image):
     """Extracts the edges of an image using HED. It also applies a threshold and skeletonization to extcract
-    the stronger edges
+    the stronger edges.
 
     Parameters
     ----------
@@ -124,12 +124,9 @@ def extract_edges(image):
     input_image = preprocess_image(image)
     image_edges = run_hed_network(input_image)
 
-    # gray to binary
     hed_seg = np.ones((image_edges.shape[0], image_edges.shape[1]))
     hed_seg[image_edges < 0.3] = 0
 
-    # skeletonize to get inner lines
     edges = sk.morphology.skeletonize(hed_seg).astype(int)
-    # image_edges = sk.morphology.closing(image_edges, footprint=np.ones((5, 5))).astype(int)
 
     return edges
