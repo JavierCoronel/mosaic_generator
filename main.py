@@ -11,7 +11,7 @@ import os
 from typing import List
 
 from easydict import EasyDict as edict
-from image_preprocessor import ImagePreprocessor
+from utils.image_handler import ImageHandler
 from mosaic_guides import MosaicGuides
 from mosaic_tiles import MosaicTiles
 from mosaic_coloring import MosaicColoring
@@ -25,7 +25,7 @@ class MosaicGenerator:
         self.config_params = configuration_params
         self.image_path = configuration_params.image_path
         self.mosaic_coloring = MosaicColoring(configuration_params)
-        self.image_preprocessor = ImagePreprocessor(configuration_params)
+        self.image_handler = ImageHandler(configuration_params)
         self.mosaic_guides = MosaicGuides(configuration_params)
         self.mosaic_tiles = MosaicTiles(configuration_params)
         self.edge_extractor = EdgeExtractor(configuration_params)
@@ -73,7 +73,7 @@ class MosaicGenerator:
     def generate_mosaic(self):
         """Generates a mosaic based on pre-initialized parameters"""
         # Load and preprocess image
-        image = self.image_preprocessor.read_image()
+        image = self.image_handler.read_image()
         image_edges = self.edge_extractor.run(image)
 
         # Get initial guidelines and place tiles
