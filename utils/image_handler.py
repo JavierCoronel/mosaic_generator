@@ -3,8 +3,8 @@ import numpy as np
 from skimage import io, transform
 
 
-class ImagePreprocessor:
-    """Class to open, preprocess, extract edges and save an image"""
+class ImageHandler:
+    """Class to open, preprocess and save an image"""
 
     def __init__(self, config_parameters):
 
@@ -13,7 +13,7 @@ class ImagePreprocessor:
         self.resize_image = None or config_parameters.resize_image
 
     def read_image(self) -> np.array:
-        """Opens an image specified in the ImagePreprocessor
+        """Opens an image specified in the ImageHandler
 
         Returns
         -------
