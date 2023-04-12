@@ -1,3 +1,6 @@
+"""
+Module to open, process and save images
+"""
 import os
 import numpy as np
 from skimage import io, transform
