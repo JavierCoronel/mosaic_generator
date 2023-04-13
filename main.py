@@ -12,10 +12,10 @@ from typing import List
 
 from easydict import EasyDict as edict
 from utils.image_handler import ImageHandler
-from mosaic_guides import MosaicGuides
-from mosaic_tiles import MosaicTiles
-from mosaic_coloring import MosaicColoring
 from edges.edge_extractor import EdgeExtractor
+from mosaic.mosaic_guides import MosaicGuides
+from mosaic.mosaic_tiles import MosaicTiles
+from mosaic.mosaic_coloring import MosaicColoring
 
 
 class MosaicGenerator:

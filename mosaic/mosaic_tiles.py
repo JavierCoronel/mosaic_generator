@@ -281,7 +281,7 @@ class MosaicTiles:
         fig, axes = plt.subplots(dpi=90)
         axes.invert_yaxis()
         axes.autoscale()
-        axes.set_facecolor("antiquewhite")
+        axes.set_facecolor("darkslategray")
         # ax.set_facecolor((1.0, 0.47, 0.42))
 
         print("Drwaing mosaic")
@@ -301,6 +301,7 @@ class MosaicTiles:
         if background is not None:
             axes.set_facecolor("antiquewhite")
         axes.margins(0)
+        axes.set_aspect("auto")
 
         fig.canvas.draw()
         plt.show()
