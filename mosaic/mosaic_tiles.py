@@ -1,3 +1,8 @@
+"""
+mosaic_tiles.py
+Module to create and handle polygons that represent tiles for a mosaic.
+Copyright (c) 2023 Javier Coronel
+"""
 import time
 import random
 from typing import List

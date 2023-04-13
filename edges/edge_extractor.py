@@ -1,5 +1,7 @@
 """
-Module for edge extraction
+edge_extractor.py
+Module to extract the edges of an image with different methods.
+Copyright (c) 2023 Javier Coronel
 """
 import skimage as sk
 from skimage.morphology import disk

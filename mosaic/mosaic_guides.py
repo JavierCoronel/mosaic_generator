@@ -1,3 +1,8 @@
+"""
+mosaic_guides.py
+Module that uses image edges to estimate guidelines for placing mosaic tiles.
+Copyright (c) 2023 Javier Coronel
+"""
 import copy
 from typing import List
 import numpy as np

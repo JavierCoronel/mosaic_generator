@@ -1,10 +1,11 @@
 """
-This module provides a MosaicGenerator class for converting an image into an ancient mosaic style.
+main.py
+This is the main script for converting any image into an ancient mosaic style.
 
-The MosaicGenerator class provides a way to generate an ancient mosaic from any given image.
-It reads the input image, extracts its edges, and then creates polyggon tiles based on the extracted edges.
-The coloring of the tiles is taken from the original image or it can be generated using different coloring methods like 'original', 'kmeans', and 'dict'.
-The generated mosaic can be plotted and saved.
+It contains the MosaicGenerator class that reads an input image, extracts its edges, and then creates polygons
+representing the tiles of a mosaic. The coloring of the tiles is taken from the original image, or it can be generated
+using different methods. The generated mosaic is plotted and saved.
+Copyright (c) 2023 Javier Coronel
 """
 
 import os

@@ -1,5 +1,7 @@
 """
-Module to open, process and save images
+image_handler.py
+Module to open, process and save images.
+Copyright (c) 2023 Javier Coronel
 """
 import os
 import numpy as np

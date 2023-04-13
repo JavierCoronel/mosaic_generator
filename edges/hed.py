@@ -1,5 +1,10 @@
 """
-Module to extract the edges of an image using Holistically-Nested Edge Detection
+hed.py
+Module to extract the edges of an image using Holistically-Nested Edge Detection.
+Based on:
+https://github.com/yobeatz/mosaic/blob/main/edges.py
+https://github.com/opencv/opencv/blob/master/samples/dnn/edge_detection.py
+Copyright (c) 2023 Javier Coronel
 """
 import os
 from pathlib import Path
@@ -10,7 +15,6 @@ import skimage as sk
 from skimage import filters
 
 
-# based on https://github.com/opencv/opencv/blob/master/samples/dnn/edge_detection.py
 class CropLayer(object):
     """Modified version of a Crop Layer in OpenCV"""
 

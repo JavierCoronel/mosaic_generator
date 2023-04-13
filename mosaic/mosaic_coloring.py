@@ -1,5 +1,7 @@
 """
-Module to extract the color from an image and apply it to the tiles of a mosaic
+mosaic_coloring.py
+Module to extract the colors of an image and apply themto the tiles of a mosaic.
+Copyright (c) 2023 Javier Coronel
 """
 from pathlib import Path
 import os
