@@ -4,12 +4,15 @@ Module that uses image edges to estimate guidelines for placing mosaic tiles.
 Copyright (c) 2023 Javier Coronel
 """
 import copy
+import logging
 from typing import List
 import numpy as np
 from scipy.ndimage import label, morphology
 from skimage import draw
 from skimage.morphology import closing, disk, skeletonize
 import matplotlib.pyplot as plt
+
+logger = logging.getLogger("__main__." + __name__)
 
 
 class MosaicGuides:
@@ -35,6 +38,7 @@ class MosaicGuides:
             A tuple containing the list of initial guidelines and the array of guideline angles
 
         """
+        logger.info("Calculating mosaic guides")
         self.height = image_edges.shape[0]
         self.width = image_edges.shape[1]
 
@@ -132,6 +136,7 @@ class MosaicGuides:
 
     def get_gaps_from_polygons(self, polygons):
 
+        logger.info("Getting guidelines for gaps in mosaic")
         # get area which are already_coord occupied
         img_chains = np.zeros((self.height, self.width), dtype=np.uint8)
 
@@ -169,7 +174,7 @@ class MosaicGuides:
         axis.invert_yaxis()
         axis.autoscale()
 
-        print("Drwaing chain")
+        logger.info("Drawing chain")
         for chain in chains:
             y_coord, x_coord = np.array(chain).T
             axis.plot(y_coord, x_coord, lw=0.7)  # , c='w'

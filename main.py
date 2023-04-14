@@ -11,8 +11,11 @@ Copyright (c) 2023 Javier Coronel
 import os
 from typing import List
 
+import logging
+import json
 from easydict import EasyDict as edict
 from utils.image_handler import ImageHandler
+from utils.logging_setup import intialize_logging
 from edges.edge_extractor import EdgeExtractor
 from mosaic.mosaic_guides import MosaicGuides
 from mosaic.mosaic_tiles import MosaicTiles
@@ -23,6 +26,7 @@ class MosaicGenerator:
     """A class to generate a mosaic"""
 
     def __init__(self, configuration_params):
+        logging.getLogger("MosaicGenerator")
         self.config_params = configuration_params
         self.image_path = configuration_params.image_path
         self.mosaic_coloring = MosaicColoring(configuration_params)
@@ -66,7 +70,7 @@ class MosaicGenerator:
         file_name = os.path.basename(self.config_params.image_path)
         output_path = os.path.join(self.config_params.output_folder, file_name)
         dpi = 300
-        print(f"Saving mosaic to {output_path}")
+        logger.info("Saving mosaic to %s", output_path)
         dest_dir = os.path.dirname(output_path)
         os.makedirs(dest_dir, exist_ok=True)
         mosaic_figure.savefig(output_path, dpi=dpi)
@@ -78,11 +82,10 @@ class MosaicGenerator:
         image_edges = self.edge_extractor.run(image)
 
         # Get initial guidelines and place tiles
-        print("Obtaining mosaic...")
         initial_guides, initial_angles = self.mosaic_guides.get_initial_guides(image_edges)
         raw_mosaic = self.mosaic_tiles.place_tiles_along_guides(initial_guides, initial_angles)
 
-        print("Refining mosaic...")
+        logger.info("Refining mosaic...")
         # Iterate to replace gaps guidelines and tiles
         final_mosaic = self.fill_mosaic_gaps(raw_mosaic)
 
@@ -92,7 +95,7 @@ class MosaicGenerator:
 
         self.save_mosaic(fig)
 
-        print("Mosaic finished")
+        logger.info("Mosaic finished")
 
 
 if __name__ == "__main__":
@@ -107,6 +110,11 @@ if __name__ == "__main__":
         "resize_image": True,
     }
     config_parameters = edict(config_parameters)
-    mosaic = MosaicGenerator(config_parameters)
+    logger = intialize_logging(config_parameters.output_folder)
 
+    logger.info("Using the following configuration:")
+    logger.info(json.dumps(config_parameters, indent=4))
+
+    logger.info("Starting MosaicGenerator")
+    mosaic = MosaicGenerator(config_parameters)
     mosaic.generate_mosaic()

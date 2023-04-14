@@ -3,10 +3,13 @@ edge_extractor.py
 Module to extract the edges of an image with different methods.
 Copyright (c) 2023 Javier Coronel
 """
+import logging
 import skimage as sk
 from skimage.morphology import disk
 import numpy as np
 from edges import hed
+
+logger = logging.getLogger("__main__." + __name__)
 
 
 class EdgeExtractor:
@@ -110,6 +113,7 @@ class EdgeExtractor:
         np.array
             Extractes edges of the image
         """
+        logger.info("Extracting edges of image")
         if self.edge_extraction_method == "HED":
             edges = hed.extract_edges(image)
         elif self.edge_extraction_method == "sobel":
@@ -117,6 +121,6 @@ class EdgeExtractor:
         elif self.edge_extraction_method == "diblasi":
             edges = self.diblasi_edges(image)
         else:
-            print(f"Edge extraction option {self.edge_extractor_name} not recognized")
+            logger.error("Edge extraction option %s not recognized", self.edge_extractor_name)
 
         return edges

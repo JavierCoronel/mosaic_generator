@@ -5,12 +5,15 @@ Copyright (c) 2023 Javier Coronel
 """
 from pathlib import Path
 import os
+import logging
 from typing import List
 import numpy as np
 from skimage import io
 from skimage import draw
 from tqdm import tqdm
 from sklearn.cluster import KMeans
+
+logger = logging.getLogger("__main__." + __name__)
 
 
 class MosaicColoring:
@@ -76,7 +79,7 @@ class MosaicColoring:
             Image with applied kmeans
         """
         width, height, depth = image.shape
-        print("Estimating colormap with kmeans")
+        logger.info("Estimating colormap for image with kmeans")
         kmeans = self.kmeans_colors(image)
 
         flat_image = image.reshape(width * height, depth)
@@ -107,6 +110,7 @@ class MosaicColoring:
             image = self.apply_kmeans_to_image(image)
 
         colors = []
+        logger.info("Applying colors to mosaic")
         for polygon in tqdm(polygons):
 
             x_cord, y_cord = polygon.exterior.xy
@@ -135,7 +139,7 @@ def modify_colors(colors, variant, colors_collection=None):
 
     # nearest_color( ((1, 1, 1, "white"), (1, 0, 0, "red"),), (64/255,0,0) ) # example
     new_colors = []
-    print("Recoloring...")
+    logger.info("Recoloring...")
     for color in tqdm(colors):
         if variant == "monochrome":
             c_new = nearest_color(((1, 1, 1), (0, 0, 0)), color)  # monochrom

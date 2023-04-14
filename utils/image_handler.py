@@ -3,9 +3,13 @@ image_handler.py
 Module to open, process and save images.
 Copyright (c) 2023 Javier Coronel
 """
+
 import os
+import logging
 import numpy as np
 from skimage import io, transform
+
+logger = logging.getLogger("__main__." + __name__)
 
 
 class ImageHandler:
@@ -26,6 +30,7 @@ class ImageHandler:
             Array with the image
         """
         assert os.path.isfile(self.image_path), f"Image file does not exist: {self.image_path}"
+        logger.info("Loading image")
         image = io.imread(self.image_path)
 
         if self.resize_image:

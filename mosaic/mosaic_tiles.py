@@ -6,6 +6,7 @@ Copyright (c) 2023 Javier Coronel
 import time
 import random
 from typing import List
+import logging
 import numpy as np
 from shapely.geometry import LineString, Polygon, MultiPoint
 from shapely.validation import make_valid
@@ -13,6 +14,8 @@ from shapely import affinity
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from matplotlib import patches
+
+logger = logging.getLogger("__main__." + __name__)
 
 RAND_SIZE = 0.15  # portion of tile size which is added or removed randomly during construction
 MAX_ANGLE = 40  # 30...75 => max construction angle for tiles along roundings
@@ -44,6 +47,7 @@ class MosaicTiles:
         List
             List containing all the polygon objects that represent the tiles of a mosaic
         """
+        logger.info("Placing mosaics allong guides")
         if polygons is None:
             polygons = []
         for chain in tqdm(chains):
@@ -180,6 +184,7 @@ class MosaicTiles:
 
     def postprocess_polygons(self, polygons):
 
+        logger.info("Posptrocessing mosaic")
         # complete_polygons = self.cut_tiles_outside_frame(polygons)
         shrinked_polygons = self._irregular_shrink(polygons)
         repaired_polygons = self._repair_tiles(shrinked_polygons)
@@ -271,7 +276,7 @@ class MosaicTiles:
 
                 if polygon_is_in_valid_area:
                     polygons_cut += [polygon]
-        print(f"Up to {counter} tiles beyond image borders were cut", f"{time.time()-t_0:.1f}s")
+        logger.infof("Up to {counter} tiles beyond image borders were cut", f"{time.time()-t_0:.1f}s")
         return polygons_cut
 
     @staticmethod
@@ -282,14 +287,13 @@ class MosaicTiles:
 
     @staticmethod
     def plot_polygons(polygons, colors=None, background=None):
-
+        logger.info("Plotting polygons for mosaic")
         fig, axes = plt.subplots(dpi=90)
         axes.invert_yaxis()
         axes.autoscale()
         axes.set_facecolor("darkslategray")
         # ax.set_facecolor((1.0, 0.47, 0.42))
 
-        print("Drwaing mosaic")
         for j, polygon in enumerate(tqdm(polygons)):  # +
 
             if colors is not None:
