@@ -19,12 +19,12 @@ The project uses the following steps to convert an image into a mosaic:
 
 ## Usage
 
-To use this project, simply run the `mosaic_generator.py` script adjusting the `config_parameters`:
+To use this project, simply run the `main.py` script adjusting the `config_parameters`:
 - Provide the path to the input image and a desired output folder.
 - Define the desired tile size for the mosaic.
 - Define the method of edge extraction (HED, diblasi, sobel)
 - Define the coloring method (Original colors, k-means clustered colors)
-- Whether to resize the image or not.
+- Whether to resize the image or not (if the image is too big).
 
 
 ## Requirements
