@@ -4,7 +4,7 @@ This repository contains Python code to convert any image into an artistic mosai
 
 |     **Original Image**     |     **Generated Mosaic**     |
 | :------------------------: | :--------------------------: |
-|  <img src="data/donkey_original.jpg" width="350" height="350" style="border: 1px solid black;"/>  |  <img src="data/donkey_mosaic.jpg" width="350" height="350" style="border: 1px solid black;"/>  |
+|  <img src="data/donkey_original.jpg" width="350" height="350" style="border: 1px solid black; max-width:100%; height:auto;"/>  |  <img src="data/donkey_mosaic.jpg" width="350" height="350" style="border: 1px solid black; max-width:100%; height:auto;"/>  |
 
 
 ## Implementation Details
@@ -29,11 +29,7 @@ To use this project, simply run the `main.py` script adjusting the `config_param
 
 ## Requirements
 
-- Python 3.x
-- Skimage
-- Matplotlib
-- Numpy
-- Easydict
+Check the [`requirements`](requirements.txt) file.
 
 ## Contributions
 
