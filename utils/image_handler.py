@@ -8,6 +8,7 @@ import os
 import logging
 import numpy as np
 from skimage import io, transform
+from hydra.utils import get_original_cwd
 
 logger = logging.getLogger("__main__." + __name__)
 
@@ -18,7 +19,7 @@ class ImageHandler:
     def __init__(self, config_parameters):
 
         self.config = config_parameters
-        self.image_path = config_parameters.image_path
+        self.image_path = os.path.join(get_original_cwd(), config_parameters.image_path)
         self.resize_image = None or config_parameters.resize_image
 
     def read_image(self) -> np.array:
@@ -29,6 +30,7 @@ class ImageHandler:
         np.array
             Array with the image
         """
+
         assert os.path.isfile(self.image_path), f"Image file does not exist: {self.image_path}"
         logger.info("Loading image")
         image = io.imread(self.image_path)

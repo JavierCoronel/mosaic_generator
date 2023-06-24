@@ -46,3 +46,4 @@ dmypy.json
 *.npy
 *.caffemodel
 *.prototxt
+*.yaml
