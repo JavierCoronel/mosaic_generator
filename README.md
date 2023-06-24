@@ -19,12 +19,23 @@ The project uses the following steps to convert an image into a mosaic:
 
 ## Usage
 
-To use this project, simply run the `main.py` script adjusting the `config_parameters`:
-- Provide the path to the input image and a desired output folder.
-- Define the desired tile size for the mosaic.
-- Define the method of edge extraction (HED, diblasi, sobel)
-- Define the coloring method (Original colors, k-means clustered colors)
-- Whether to resize the image or not (if the image is too big).
+To generate a mosaic have a look at the following steps:
+1. **Create your configuration parameters**. Use the file `data/configs/default.yaml` as a template for the parameters:
+    - Provide the path to the input image and a desired output folder.
+    - Define the method of edge extraction (HED, diblasi, sobel).
+    - Define the desired tile size for the mosaic.
+    - Define the coloring method (Original colors, k-means clustered colors) and the total number of colors.
+    - Whether to resize the image or not (if the image is too big).
+    
+    Save the yaml file with a new file name.
+2. **Run the code to generate the mosaic**: Run the main script as follows:
+    ```
+    python main.py --config-name=config_name
+    ```
+3. **Inspect your mosaic**: In the output folder you specified, you will find a subfolder named with the date of code execution. This allows for running the code multiple times with different parameters for a same image. Inside each folder you will find the following files:
+    - The mosaic saved as an image.
+    - The YAML file with the parameters you used for this mosaic.
+    - A log file capturing all the information printed by the code during its execution.
 
 
 ## Requirements
