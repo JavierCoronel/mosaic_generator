@@ -12,6 +12,8 @@ from omegaconf import DictConfig, OmegaConf
 
 from mosaic.mosaic_generator import MosaicGenerator
 
+logger = logging.getLogger(__name__)
+
 
 @hydra.main(config_path="data/configs", config_name="default.yaml")
 def generate_mosaic(cfg: DictConfig) -> None:
@@ -22,10 +24,10 @@ def generate_mosaic(cfg: DictConfig) -> None:
     cfg : DictConfig
         Parameters listed in a yaml config file
     """
-    logging.info("Using the following configuration:")
-    logging.info(OmegaConf.to_yaml(cfg))
+    logger.info("Using the following configuration:")
+    logger.info(OmegaConf.to_yaml(cfg))
 
-    logging.info("Starting MosaicGenerator")
+    logger.info("Starting MosaicGenerator")
     mosaic = MosaicGenerator(cfg)
     mosaic.generate_mosaic()
 

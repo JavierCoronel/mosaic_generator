@@ -47,7 +47,7 @@ class MosaicTiles:
         List
             List containing all the polygon objects that represent the tiles of a mosaic
         """
-        logger.info("Placing mosaics allong guides")
+        logger.info(f"Placing tiles along {len(chains)} guidelines")
         if polygons is None:
             polygons = []
         for chain in tqdm(chains):

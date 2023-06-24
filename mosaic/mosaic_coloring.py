@@ -61,7 +61,7 @@ class MosaicColoring:
         kmeans = self.kmeans_colors(input_image)
         color_centers = kmeans.cluster_centers_.astype(int)
         script_path = Path(__file__).parent.absolute()
-        out_path = Path.joinpath(script_path, "data", "color_collections")
+        out_path = Path.joinpath(script_path, "..", "data", "color_collections")
         os.makedirs(out_path, exist_ok=True)
         np.save(out_path / os.path.basename(img_path), color_centers)
 
@@ -170,7 +170,7 @@ def load_colors():
 
 if __name__ == "__main__":
 
-    data_paths = [r"data\input\dalle_4.jpg"]
-    color_extractor = MosaicColoring({"coloring_method": "kmeans"})
+    data_paths = [r"..\data\input\marmor_colors.jpg"]
+    color_extractor = MosaicColoring({"coloring_method": "kmeans", "num_colors": 13})
     for fname in data_paths:
         color_extractor.extract_colormap(fname)

@@ -33,7 +33,7 @@ class MosaicGenerator:
         self.edge_extractor = EdgeExtractor(configuration_params)
 
     def fill_mosaic_gaps(self, tiles: List[int], iter_num: int = 4) -> List[int]:
-        """_summary_
+        """Loop to find gaps and fill them with more tiles if there are any after generating the mosaic.
 
         Parameters
         ----------
