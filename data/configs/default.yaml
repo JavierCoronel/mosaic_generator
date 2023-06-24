@@ -1,0 +1,11 @@
+image_path: path/to/image
+output_folder: /path/to/output/folder
+edge_extraction_method: HED # Options: HED,sobel,diblasi
+tile_size: tile_size_in_pixels [int]
+coloring_method: original  # Options: original,kmeans,dict
+num_colors: number_of_mosaic_colors [int]
+resize_image: False
+
+hydra:
+  run:
+    dir: ${output_folder}/${now:%Y.%m.%d-%H-%M-%S}
