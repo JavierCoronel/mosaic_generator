@@ -287,6 +287,9 @@ class MosaicTiles:
 
     @staticmethod
     def plot_polygons(polygons, colors=None, background=None):
+
+        # Turn interactive plotting off
+        plt.ioff()
         logger.info("Plotting polygons for mosaic")
         fig, axes = plt.subplots(dpi=90)
         axes.invert_yaxis()
@@ -313,6 +316,6 @@ class MosaicTiles:
         axes.set_aspect("auto")
 
         fig.canvas.draw()
-        plt.show()
+        # plt.show()
 
         return fig

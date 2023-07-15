@@ -19,6 +19,7 @@ The project uses the following steps to convert an image into a mosaic:
 
 ## Usage
 
+### Generate one mosaic with defined parameters
 To generate a mosaic have a look at the following steps:
 1. **Create your configuration parameters**. Use the file `data/configs/default.yaml` as a template for the parameters:
     - Provide the path to the input image and a desired output folder.
@@ -37,6 +38,14 @@ To generate a mosaic have a look at the following steps:
     - The YAML file with the parameters you used for this mosaic.
     - A log file capturing all the information printed by the code during its execution.
 
+### Generate different mosaics with multiple parameters
+You can also run the code in parallel for multiple parameters.
+1. **List the parameter values**. Use the file `data/configs/default_parallel.yaml` as a template to add or remove different parameter values.
+2. **Run the code to generate the mosaic**: Run the main script as follows:
+    ```
+    python main.py --config-name=parallel_config_name
+    ```
+3. **Inspect the results**: After parallel code execution, the output folder will contain subfolders corresponding to different run IDs. You can inscpect the parameters by referring to the respective saved YAML files for each run.
 
 ## Requirements
 

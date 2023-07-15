@@ -1,0 +1,21 @@
+image_path: path/to/image
+output_folder: /path/to/output/folder
+num_colors: number_of_mosaic_colors [int]
+resize_image: False
+
+defaults:
+  - override hydra/launcher: joblib
+
+hydra:
+  run:
+    dir: ${output_folder}/${now:%Y.%m.%d-%H-%M-%S}
+  mode: MULTIRUN
+  sweep:
+    dir: ${output_folder}/multirun
+    subdir: run_${hydra.job.num}_${now:%Y.%m.%d-%H-%M-%S}
+  sweeper:
+    params:
+      +edge_extraction_method: HED,diblasi
+      +tile_size: 4,8,10
+      +coloring_method: original,kmeans
+      #Add/remove here the parameter names and values you want to try out
