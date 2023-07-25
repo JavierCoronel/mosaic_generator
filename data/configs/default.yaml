@@ -1,10 +1,10 @@
-image_path: path/to/image
-output_folder: /path/to/output/folder
-edge_extraction_method: HED # Options: HED,sobel,diblasi
-tile_size: tile_size_in_pixels [int]
-coloring_method: original  # Options: original,kmeans,dict
-num_colors: number_of_mosaic_colors [int]
-resize_image: False
+image_path: /path/to/image.jpg # string with absolute or relative path to the image
+output_folder: /path/to/folder # string with absolute or relative path to the output folder
+edge_extraction_method: HED # string with any of the options: HED (deep learning method), diblasi or sobel
+tile_size: 10 # int defining the tile size in pixels
+coloring_method: kmeans # str with any of the options: original (more colors), kmeans
+num_colors: 5 # int with number of colors to extract, only applicable when coloring_method: kmeans
+resize_image: False # bool defining if to resize the image to half the size
 
 hydra:
   run:

@@ -1,7 +1,7 @@
-image_path: path/to/image
-output_folder: /path/to/output/folder
-num_colors: number_of_mosaic_colors [int]
-resize_image: False
+image_path: /path/to/image.jpg # string with absolute or relative path to the image
+output_folder: /path/to/folder # string with absolute or relative path to the output folder
+num_colors: 5 # int with number of colors to extract, only applicable when coloring_method: kmeans
+resize_image: False # bool defining if to resize the image to half the size
 
 defaults:
   - override hydra/launcher: joblib
