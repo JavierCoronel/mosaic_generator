@@ -27,6 +27,7 @@ To generate a mosaic have a look at the following steps:
     - Define the desired tile size for the mosaic.
     - Define the coloring method (Original colors, k-means clustered colors) and the total number of colors.
     - Whether to resize the image or not (if the image is too big).
+    - The desired size in cm of the output image.
     
     Save the yaml file with a new file name.
 2. **Run the code to generate the mosaic**: Run the main script as follows:

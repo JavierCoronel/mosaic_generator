@@ -66,11 +66,10 @@ class MosaicGenerator:
         """
         file_name = os.path.basename(self.config_params.image_path)
         output_path = os.path.join(os.getcwd(), file_name)
-        dpi = 300
         logger.info("Saving mosaic to %s", output_path)
         dest_dir = os.path.dirname(output_path)
         os.makedirs(dest_dir, exist_ok=True)
-        mosaic_figure.savefig(output_path, dpi=dpi)
+        mosaic_figure.savefig(output_path, dpi=96, format="png")
 
     def generate_mosaic(self):
         """Generates a mosaic based on pre-initialized parameters"""

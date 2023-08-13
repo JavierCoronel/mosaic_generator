@@ -23,6 +23,7 @@ MAX_ANGLE = 40  # 30...75 => max construction angle for tiles along roundings
 
 class MosaicTiles:
     def __init__(self, config_parameters):
+        self.config = config_parameters
         self.tile_size = config_parameters.tile_size
         self.tile_area = (self.tile_size) ** 2
         self.half_tile_size = self.tile_size // 2
@@ -285,13 +286,13 @@ class MosaicTiles:
             return True
         return False
 
-    @staticmethod
-    def plot_polygons(polygons, colors=None, background=None):
+    def plot_polygons(self, polygons, colors=None, background=None):
 
         # Turn interactive plotting off
         plt.ioff()
         logger.info("Plotting polygons for mosaic")
-        fig, axes = plt.subplots(dpi=90)
+        fig, axes = plt.subplots(dpi=96, figsize=(self.config.mosaic_width / 2.54, self.config.mosaic_height / 2.54))
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         axes.invert_yaxis()
         axes.autoscale()
         axes.set_facecolor("darkslategray")
@@ -313,8 +314,6 @@ class MosaicTiles:
         if background is not None:
             axes.set_facecolor("antiquewhite")
         axes.margins(0)
-        axes.set_aspect("auto")
-
         fig.canvas.draw()
         # plt.show()
 
