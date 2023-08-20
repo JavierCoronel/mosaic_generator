@@ -13,8 +13,8 @@ hydra:
     dir: ${output_folder}/${now:%Y.%m.%d-%H-%M-%S}
   mode: MULTIRUN
   sweep:
-    dir: ${output_folder}/multirun
-    subdir: run_${hydra.job.num}_${now:%Y.%m.%d-%H-%M-%S}
+    dir: ${output_folder}/multirun_${now:%Y.%m.%d-%H-%M-%S}
+    subdir: run_${hydra.job.num}
   sweeper:
     params:
       +edge_extraction_method: HED,diblasi
