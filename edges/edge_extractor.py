@@ -8,6 +8,7 @@ import skimage as sk
 from skimage.morphology import disk
 import numpy as np
 from edges import hed
+import cv2
 
 logger = logging.getLogger("__main__." + __name__)
 
@@ -17,6 +18,7 @@ class EdgeExtractor:
 
     def __init__(self, config_parameters):
         self.edge_extraction_method = config_parameters.edge_extraction_method
+        self.interactive_edge_modification = config_parameters.interactive_edge_modification
 
     def diblasi_edges(self, image: np.array) -> np.array:
         """
@@ -99,6 +101,75 @@ class EdgeExtractor:
 
         return preprocessed_image
 
+    @staticmethod
+    def interactive_edge_correction(original_image: np.array, edges_image: np.array, use_drawing=False) -> np.array:
+        """Interactive edge correction in an image using drawing or erasing.
+
+        Keybindings
+        ----------
+            'c': Toggle between drawing and erasing mode.
+            '+': Increase the size of the eraser.
+            '-': Decrease the size of the eraser.
+            'q': Finish the interactive correction process.
+
+        Parameters
+        ----------
+        original_image : np.array
+            RGB image to overlay for interactive visualization.
+        edges_image : np.array
+            Binary image with edges to be corrected.
+        use_drawing : bool, optional
+            Whether to enable drawing mode for correcting edges, by default False
+
+        Returns
+        -------
+        np.array
+            Edited edges image after user interaction, normalized to the range [0, 1]
+        """
+        original_image = cv2.cvtColor(original_image.astype(np.uint8), cv2.COLOR_RGB2BGR)
+        edited_edges = (edges_image * 255).astype(np.uint8).copy()
+        drawing = False
+        eraser_size = 5
+        is_drawing_edges = use_drawing
+
+        def draw_edges(event, x_cord, y_cord, flags, param):
+            nonlocal edited_edges, drawing, eraser_size
+
+            if event == cv2.EVENT_LBUTTONDOWN:
+                drawing = True
+                param["prev_pt"] = (x_cord, y_cord)
+            elif event == cv2.EVENT_MOUSEMOVE and drawing:
+                if "prev_pt" in param:
+                    if is_drawing_edges:
+                        cv2.line(edited_edges, param["prev_pt"], (x_cord, y_cord), 255, 1)
+                        param["prev_pt"] = (x_cord, y_cord)
+                    else:
+                        cv2.circle(edited_edges, (x_cord, y_cord), eraser_size, 0, -1)
+            elif event == cv2.EVENT_LBUTTONUP:
+                drawing = False
+                param.pop("prev_pt", None)
+
+        cv2.namedWindow("Edge Correction", cv2.WINDOW_NORMAL)
+        cv2.setMouseCallback("Edge Correction", draw_edges, {"prev_pt": None})
+
+        while True:
+            binary_rgb = np.zeros_like(original_image)
+            binary_rgb[:, :, 0] = edited_edges
+            overlay_image = cv2.addWeighted(original_image, 0.35, binary_rgb, 0.65, 0)
+            cv2.imshow("Edge Correction", overlay_image)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("c"):
+                is_drawing_edges = not is_drawing_edges
+            elif key == ord("+"):  # Press 'f' to increase line size
+                eraser_size += 1
+            elif key == ord("-"):  # Press 'f' to increase line size
+                eraser_size -= 1
+            elif key == ord("q"):
+                break
+
+        cv2.destroyAllWindows()
+        return edited_edges / 255
+
     def run(self, image: np.array) -> np.array:
         """Extractes the edges of an image depending on the edge extracting method specified in
         the configuration file
@@ -122,5 +193,8 @@ class EdgeExtractor:
             edges = self.diblasi_edges(image)
         else:
             logger.error("Edge extraction option %s not recognized", self.edge_extractor_name)
+
+        if self.interactive_edge_modification:
+            edges = self.interactive_edge_correction(image, edges)
 
         return edges
