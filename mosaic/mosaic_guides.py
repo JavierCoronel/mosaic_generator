@@ -3,6 +3,8 @@ mosaic_guides.py
 Module that uses image edges to estimate guidelines for placing mosaic tiles.
 Copyright (c) 2023 Javier Coronel
 """
+from pathlib import Path
+import os
 import copy
 import logging
 from typing import List
@@ -17,6 +19,7 @@ logger = logging.getLogger("__main__." + __name__)
 
 class MosaicGuides:
     def __init__(self, config_parameters):
+        self.config_params = config_parameters
         self.half_tile = config_parameters.tile_size // 2
         self.chain_spacing = 0.5
         self.height = None
@@ -50,6 +53,9 @@ class MosaicGuides:
 
         list_of_guidelines = self._get_list_of_guidelines(guidelines)
         angles = self._get_guideline_angles(distance_to_edge)
+
+        if self.config_params.save_intermediate_steps:
+            self.plot_chains(list_of_guidelines)
 
         return list_of_guidelines, angles
 
@@ -159,6 +165,9 @@ class MosaicGuides:
         chains = self._get_list_of_guidelines(skeletonize(guidelines2))
         angles = self._get_guideline_angles(distance_to_tile)
 
+        if self.config_params.save_intermediate_steps:
+            self.plot_chains(chains)
+
         return chains, angles
 
     @staticmethod
@@ -167,16 +176,37 @@ class MosaicGuides:
             return True
         return False
 
-    @staticmethod
-    def plot_chains(chains):
+    def plot_chains(self, chains: List):
+        """Plot a list of chains and save them to a location.
 
-        _, axis = plt.subplots(dpi=90)
-        axis.invert_yaxis()
-        axis.autoscale()
+        Parameters
+        ----------
+        chains : List
+            List of guides containing the chains along which the tiles need to be placed.
+        """
+
+        plt.ioff()
+        fig, axes = plt.subplots(
+            dpi=96, figsize=(self.config_params.mosaic_width / 2.54, self.config_params.mosaic_height / 2.54)
+        )
+        axes.set_aspect(self.height / self.width)
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        axes.invert_yaxis()
+        axes.autoscale()
 
         logger.info("Drawing chain")
         for chain in chains:
             y_coord, x_coord = np.array(chain).T
-            axis.plot(y_coord, x_coord, lw=0.7)  # , c='w'
+            axes.plot(x_coord, y_coord, lw=0.7)
+        axes.margins(0)
 
-        plt.show()
+        file_name = Path(self.config_params.image_path).stem
+        guide_step_id = 0
+        while True:
+            output_path = os.path.join(os.getcwd(), "intermediate_steps", f"{file_name}_guides_{guide_step_id}.png")
+            if not os.path.isfile(output_path):
+                break
+            guide_step_id += 1
+
+        logger.info("Saving mosaic guides to %s", output_path)
+        fig.savefig(output_path, dpi=96, format="png")

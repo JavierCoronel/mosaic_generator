@@ -5,6 +5,7 @@ resize_image: False # bool defining if to resize the image to half the size
 mosaic_height: 10 # Size in cm of the desired mosaic
 mosaic_width: 10 # Size in cm of the desired mosaic
 interactive_edge_modification: False # If set to true it opens an interactive window to modify the edges, better set to False for parallel running
+save_intermediate_steps: False # Defines if to save the intermediate steps (extracted edges, mosaic guides)
 
 defaults:
   - override hydra/launcher: joblib

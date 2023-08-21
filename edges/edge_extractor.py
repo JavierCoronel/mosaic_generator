@@ -3,6 +3,8 @@ edge_extractor.py
 Module to extract the edges of an image with different methods.
 Copyright (c) 2023 Javier Coronel
 """
+from pathlib import Path
+import os
 import logging
 import skimage as sk
 from skimage.morphology import disk
@@ -17,6 +19,7 @@ class EdgeExtractor:
     """Class for edge extraction using different methods"""
 
     def __init__(self, config_parameters):
+        self.config_params = config_parameters
         self.edge_extraction_method = config_parameters.edge_extraction_method
         self.interactive_edge_modification = config_parameters.interactive_edge_modification
 
@@ -196,5 +199,12 @@ class EdgeExtractor:
 
         if self.interactive_edge_modification:
             edges = self.interactive_edge_correction(image, edges)
+
+        if self.config_params.save_intermediate_steps:
+            os.makedirs(os.path.join(os.getcwd(), "intermediate_steps"), exist_ok=True)
+            file_name = Path(self.config_params.image_path).stem
+            output_path = os.path.join(os.getcwd(), "intermediate_steps", file_name + "_edges.png")
+            logger.info("Saving image edges to %s", output_path)
+            sk.io.imsave(output_path, (edges * 255).astype(np.uint8))
 
         return edges
