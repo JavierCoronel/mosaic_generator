@@ -9,7 +9,7 @@ mosaic_height: 10 # Size in cm of the desired mosaic
 mosaic_width: 10 # Size in cm of the desired mosaic
 interactive_edge_modification: True # If set to true it opens an interactive window to modify the edges
 save_intermediate_steps: False # Defines if to save the intermediate steps (extracted edges, mosaic guides)
-edges_path : None # You can load extracted edges if they were saved, give the path to the image with the edges
+edges_path : null # You can load extracted edges if they were saved, give the path to the image with the edges
 
 hydra:
   run:
