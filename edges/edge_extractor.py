@@ -129,6 +129,7 @@ class EdgeExtractor:
         np.array
             Edited edges image after user interaction, normalized to the range [0, 1]
         """
+        logger.info("Launching interactive edge correction")
         original_image = cv2.cvtColor(original_image.astype(np.uint8), cv2.COLOR_RGB2BGR)
         edited_edges = (edges_image * 255).astype(np.uint8).copy()
         drawing = False
@@ -173,6 +174,21 @@ class EdgeExtractor:
         cv2.destroyAllWindows()
         return edited_edges / 255
 
+    def load_extracted_edges(self) -> np.array:
+        """Load an image with previously saved edges.
+
+        Returns
+        -------
+        np.array
+            Array with the binary edges
+        """
+        image_path = self.config_params.edges_path
+        assert os.path.isfile(image_path), f"The edges file {image_path} does not exist"
+        edges = sk.io.imread(self.config_params.edges_path)
+        edges = edges / 255
+
+        return edges
+
     def run(self, image: np.array) -> np.array:
         """Extractes the edges of an image depending on the edge extracting method specified in
         the configuration file
@@ -188,7 +204,10 @@ class EdgeExtractor:
             Extractes edges of the image
         """
         logger.info("Extracting edges of image")
-        if self.edge_extraction_method == "HED":
+        if self.config_params.edges_path:
+            logger.info("A path to extracted edges was provided")
+            edges = self.load_extracted_edges()
+        elif self.edge_extraction_method == "HED":
             edges = hed.extract_edges(image)
         elif self.edge_extraction_method == "sobel":
             edges = self.sobel_edges(image)

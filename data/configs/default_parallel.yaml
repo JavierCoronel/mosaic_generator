@@ -6,6 +6,7 @@ mosaic_height: 10 # Size in cm of the desired mosaic
 mosaic_width: 10 # Size in cm of the desired mosaic
 interactive_edge_modification: False # If set to true it opens an interactive window to modify the edges, better set to False for parallel running
 save_intermediate_steps: False # Defines if to save the intermediate steps (extracted edges, mosaic guides)
+edges_path : null # You can load extracted edges if they were saved, give the path to the image with the edges
 
 defaults:
   - override hydra/launcher: joblib
