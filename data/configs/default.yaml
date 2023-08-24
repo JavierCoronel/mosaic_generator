@@ -2,12 +2,12 @@ image_path: /path/to/image.jpg # string with absolute or relative path to the im
 output_folder: /path/to/folder # string with absolute or relative path to the output folder
 edge_extraction_method: HED # string with any of the options: HED (deep learning method), diblasi or sobel
 tile_size: 10 # int defining the tile size in pixels
-coloring_method: kmeans # str with any of the options: original (more colors), kmeans
+coloring_method: original # str with any of the options: original (more colors), kmeans
 num_colors: 5 # int with number of colors to extract, only applicable when coloring_method: kmeans
 resize_image: False # bool defining if to resize the image to half the size
 mosaic_height: 10 # Size in cm of the desired mosaic
 mosaic_width: 10 # Size in cm of the desired mosaic
-interactive_edge_modification: True # If set to true it opens an interactive window to modify the edges
+interactive_edge_modification: False # If set to true it opens an interactive window to modify the edges
 save_intermediate_steps: False # Defines if to save the intermediate steps (extracted edges, mosaic guides)
 edges_path : null # You can load extracted edges if they were saved, give the path to the image with the edges
 
