@@ -1,5 +1,5 @@
-image_path: /path/to/image.jpg # string with absolute or relative path to the image
-output_folder: /path/to/folder # string with absolute or relative path to the output folder
+image_path: data/donkey_original.jpg # string with absolute or relative path to the image
+output_folder: data/ # string with absolute or relative path to the output folder
 edge_extraction_method: HED # string with any of the options: HED (deep learning method), diblasi or sobel
 tile_size: 10 # int defining the tile size in pixels
 coloring_method: original # str with any of the options: original (more colors), kmeans

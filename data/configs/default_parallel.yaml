@@ -1,5 +1,5 @@
-image_path: /path/to/image.jpg # string with absolute or relative path to the image
-output_folder: /path/to/folder # string with absolute or relative path to the output folder
+image_path: data/donkey_original.jpg # string with absolute or relative path to the image
+output_folder: data/ # string with absolute or relative path to the output folder
 num_colors: 5 # int with number of colors to extract, only applicable when coloring_method: kmeans
 resize_image: False # bool defining if to resize the image to half the size
 mosaic_height: 10 # Size in cm of the desired mosaic
