@@ -21,7 +21,7 @@ The project uses the following steps to convert an image into a mosaic:
 
 ### Generate one mosaic with defined parameters
 To generate a mosaic have a look at the following steps:
-1. **Create your configuration parameters**. You should prepare a configuration file that lists the parameters you want to use for creating a mosaic. Check out the [configuration parameters](data/configs/configuration_parameters.md) to comprehend and select the values that suit your specific requirements. 
+1. **Create your configuration parameters**. You should prepare a configuration file that lists the parameters you want to use for creating a mosaic. Check out the [configuration parameters](data/configs/README.md) to comprehend and select the values that suit your specific requirements. 
 2. **Run the code to generate the mosaic**: Run the main script as follows:
     ```
     python main.py --config-name=config_name
