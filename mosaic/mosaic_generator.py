@@ -85,7 +85,7 @@ class MosaicGenerator:
         # Iterate to replace gaps guidelines and tiles
         final_mosaic = self.fill_mosaic_gaps(raw_mosaic)
 
-        colors = self.mosaic_coloring.get_colors_from_original(final_mosaic, image)
+        colors = self.mosaic_coloring.apply_colors(final_mosaic, image)
 
         fig = self.mosaic_tiles.plot_polygons(final_mosaic, colors)
 
