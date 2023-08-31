@@ -67,8 +67,8 @@ class MosaicColoring:
         os.makedirs(out_path, exist_ok=True)
         np.save(out_path / os.path.basename(img_path), color_centers)
 
-    def apply_kmeans_to_image(self, image: np.array) -> np.array:
-        """Extracts and applies the principal colors of an image using kmeans
+    def extract_kmeans_colors(self, image: np.array) -> np.array:
+        """Extracts the principal colors of an image using kmeans.
 
         Parameters
         ----------
@@ -85,12 +85,9 @@ class MosaicColoring:
         kmeans = self.kmeans_colors(image)
 
         flat_image = image.reshape(width * height, depth)
-        labels = kmeans.predict(flat_image)
-        codebook = kmeans.cluster_centers_
+        color_centers = kmeans.cluster_centers_
 
-        kmeans_image = codebook[labels].reshape(width, height, -1).astype(int)
-
-        return kmeans_image
+        return color_centers
 
     def get_colors_from_image(self, polygons: List, image: np.array, color_collection: np.array = None) -> List:
         """Applies colors to a list of polygons, the colors can come from the nearest neighboring pixel of the
@@ -167,6 +164,7 @@ class MosaicColoring:
             Normalized count of colors
         """
         color_names = [" ".join(map(str, ((rgb_color) * 255).astype(int))) for rgb_color in unique_colors]
+        plt.ioff()
         fig, _ = plt.subplots(dpi=96, figsize=(10, 6))
 
         # Create a bar plot
@@ -234,11 +232,12 @@ class MosaicColoring:
         if self.coloring_method == "original":
             mosaic_colors = self.get_colors_from_image(mosaic, image)
         elif self.coloring_method == "kmeans":
-            image = self.apply_kmeans_to_image(image)
-            mosaic_colors = self.get_colors_from_image(mosaic, image)
+            color_collection = self.extract_kmeans_colors(image) / 255
+            mosaic_colors = self.get_colors_from_image(mosaic, image, color_collection)
+            self.report_color_histograms(mosaic_colors, mosaic)
         elif self.coloring_method == "color_collection":
-            collor_collection = (np.load(self.colormap_path)) / 255
-            mosaic_colors = self.get_colors_from_image(mosaic, image, collor_collection)
+            color_collection = (np.load(self.colormap_path)) / 255
+            mosaic_colors = self.get_colors_from_image(mosaic, image, color_collection)
             self.report_color_histograms(mosaic_colors, mosaic)
 
         return mosaic_colors
