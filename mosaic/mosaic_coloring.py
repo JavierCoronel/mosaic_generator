@@ -78,13 +78,11 @@ class MosaicColoring:
         Returns
         -------
         np.array
-            Image with applied kmeans
+            Array with the centers of kmeans representing the main RGB colors
         """
-        width, height, depth = image.shape
         logger.info("Estimating colormap for image with kmeans")
         kmeans = self.kmeans_colors(image)
 
-        flat_image = image.reshape(width * height, depth)
         color_centers = kmeans.cluster_centers_
 
         return color_centers
