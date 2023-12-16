@@ -25,7 +25,7 @@ The project uses the following steps to convert an image into a mosaic:
     Alternatively, you can download a zip file with the contents of this repository with [this link](https://github.com/JavierCoronel/mosaic_generator/archive/master.zip). Unzip the file in your desired folder. 
 3. **Install the requirements**: Install the [required packages](requirements.txt) by opening a terminal in the mosaic_generator folder, then use:
     ```
-    pip install -r requirements. txt
+    pip install -r requirements.txt
     ```
 ## Usage
 ### Generate one mosaic with defined parameters
