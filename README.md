@@ -17,12 +17,21 @@ The project uses the following steps to convert an image into a mosaic:
 6. Plot and save the mosaic.
 
 
+## Installation
+1. **Get the code**. You can clone the repository by opening a terminal in your desired folder and using:
+    ```
+    git clone https://github.com/JavierCoronel/mosaic_generator.git
+    ```
+    Alternatively, you can download a zip file with the contents of this repository with [this link](https://github.com/JavierCoronel/mosaic_generator/archive/master.zip). Unzip the file in your desired folder. 
+3. **Install the requirements**: Install the [required packages](requirements.txt) by opening a terminal in the mosaic_generator folder, then use:
+    ```
+    pip install -r requirements. txt
+    ```
 ## Usage
-
 ### Generate one mosaic with defined parameters
 To generate a mosaic have a look at the following steps:
-1. **Create your configuration parameters**. You should prepare a configuration file that lists the parameters you want to use for creating a mosaic. Check out the [configuration parameters](data/configs/README.md) to comprehend and select the values that suit your specific requirements. 
-2. **Run the code to generate the mosaic**: Run the main script as follows:
+1. **Create your configuration parameters**. You should prepare a configuration file that lists the parameters you want to use for creating a mosaic. Check out the [configuration parameters](data/configs/README.md) to understand and select the values that suit your specific requirements. 
+2. **Run the code to generate the mosaic**: In a terminal window, execute the main script as follows:
     ```
     python main.py --config-name=config_name
     ```
@@ -30,10 +39,6 @@ To generate a mosaic have a look at the following steps:
     - The mosaic saved as an image.
     - The YAML file with the parameters you used for this mosaic.
     - A log file capturing all the information during code execution.
-
-## Requirements
-
-Check the [`requirements`](requirements.txt) file.
 
 ## Contributions
 
