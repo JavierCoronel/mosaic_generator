@@ -10,7 +10,7 @@ import logging
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
-from mosaic_generator.mosaic.mosaic_generator import MosaicGenerator
+from mosaic.mosaic_generator import MosaicGenerator
 
 logger = logging.getLogger(__name__)
 

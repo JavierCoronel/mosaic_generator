@@ -35,6 +35,9 @@ class ImageHandler:
         logger.info("Loading image")
         image = io.imread(self.image_path)
 
+        if image.shape[-1]>3:
+            image=image[:,:,:3]
+
         if self.resize_image:
             image = self.preprocess_image(image)
 
