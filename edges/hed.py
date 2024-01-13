@@ -6,6 +6,7 @@ https://github.com/yobeatz/mosaic/blob/main/edges.py
 https://github.com/opencv/opencv/blob/master/samples/dnn/edge_detection.py
 Copyright (c) 2023 Javier Coronel
 """
+# pylint: skip-file
 import os
 from pathlib import Path
 

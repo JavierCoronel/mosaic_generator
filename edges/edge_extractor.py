@@ -136,7 +136,7 @@ class EdgeExtractor:
         eraser_size = 5
         is_drawing_edges = use_drawing
 
-        def draw_edges(event, x_cord, y_cord, flags, param):
+        def draw_edges(event, x_cord, y_cord, param):
             nonlocal edited_edges, drawing, eraser_size
 
             if event == cv2.EVENT_LBUTTONDOWN:
