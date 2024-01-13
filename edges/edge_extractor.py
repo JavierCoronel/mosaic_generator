@@ -21,7 +21,7 @@ class EdgeExtractor:
     def __init__(self, config_parameters):
         self.config_params = config_parameters
         self.edge_extraction_method = config_parameters.edge_extraction_method
-        self.interactive_edge_modification = config_parameters.interactive_edge_modification
+        self.interactive_edge_modification = config_parameters.get("interactive_edge_modification", None)
 
     def diblasi_edges(self, image: np.array) -> np.array:
         """
@@ -136,7 +136,7 @@ class EdgeExtractor:
         eraser_size = 5
         is_drawing_edges = use_drawing
 
-        def draw_edges(event, x_cord, y_cord, param):
+        def draw_edges(event, x_cord, y_cord, flags, param):
             nonlocal edited_edges, drawing, eraser_size
 
             if event == cv2.EVENT_LBUTTONDOWN:
@@ -204,7 +204,7 @@ class EdgeExtractor:
             Extractes edges of the image
         """
         logger.info("Extracting edges of image")
-        if self.config_params.edges_path:
+        if self.config_params.get("edges_path", None):
             logger.info("A path to extracted edges was provided")
             edges = self.load_extracted_edges()
         elif self.edge_extraction_method == "HED":

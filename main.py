@@ -5,11 +5,11 @@ It uses the MosaicGenerator class to read an image and create a mosaic. The gene
 It uses hydra for handling the parameters to create the mosaic.
 Copyright (c) 2023 Javier Coronel
 """
-
 import logging
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
+from utils.config_resolver import ConfigResolver
 from mosaic.mosaic_generator import MosaicGenerator
 
 logger = logging.getLogger(__name__)
@@ -24,11 +24,13 @@ def generate_mosaic(cfg: DictConfig) -> None:
     cfg : DictConfig
         Parameters listed in a yaml config file
     """
-    logger.info("Using the following configuration:")
+    logger.info("Initial configuration:")
     logger.info(OmegaConf.to_yaml(cfg))
-
+    resolved_config = ConfigResolver().resolve_config(cfg)
+    logger.info("Resolved configuration:")
+    logger.info(resolved_config)
     logger.info("Starting MosaicGenerator")
-    mosaic = MosaicGenerator(cfg)
+    mosaic = MosaicGenerator(resolved_config)
     mosaic.generate_mosaic()
 
 
