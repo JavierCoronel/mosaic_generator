@@ -295,10 +295,9 @@ class MosaicTiles:
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         axes.invert_yaxis()
         axes.autoscale()
-        axes.set_facecolor("darkslategray")
-        # ax.set_facecolor((1.0, 0.47, 0.42))
+        axes.set_facecolor("slategray")
 
-        for j, polygon in enumerate(tqdm(polygons)):  # +
+        for j, polygon in enumerate(tqdm(polygons)):
 
             if colors is not None:
                 color = colors[j]
