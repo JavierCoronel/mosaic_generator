@@ -154,15 +154,16 @@ class MosaicGuides:
         img_chains_2 = closing(img_chains, disk(2))
         distance_to_tile = morphology.distance_transform_edt(img_chains_2 == 0).astype(int)
 
-        chain_spacing = int(round(self.half_tile * self.chain_spacing))
-        if chain_spacing <= 1:
-            chain_spacing = 2
-        mask = (distance_to_tile == 1) | ((distance_to_tile % chain_spacing == 0) & (distance_to_tile > 0))
+        # chain_spacing = int(round(self.half_tile * self.chain_spacing))
+        # if chain_spacing <= 1:
+        #     chain_spacing = 2
+        # mask = (distance_to_tile == 1) | ((distance_to_tile % chain_spacing == 0) & (distance_to_tile > 0))
 
-        guidelines2 = np.zeros((self.height, self.width), dtype=np.uint8)
-        guidelines2[mask] = 1
+        # guidelines2 = np.zeros((self.height, self.width), dtype=np.uint8)
+        # guidelines2[mask] = 1
+        guidelines2 = skeletonize(1 - img_chains_2)
 
-        chains = self._get_list_of_guidelines(skeletonize(guidelines2))
+        chains = self._get_list_of_guidelines(guidelines2)
         angles = self._get_guideline_angles(distance_to_tile)
 
         if self.config_params.save_intermediate_steps:
